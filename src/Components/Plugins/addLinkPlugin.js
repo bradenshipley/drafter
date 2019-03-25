@@ -2,8 +2,7 @@ import React from "react";
 import {
   RichUtils,
   KeyBindingUtil,
-  EditorState,
-  CompositeDecorator
+  EditorState
 } from "draft-js";
 
 export const linkStrategy = (contentBlock, callback, contentState) => {

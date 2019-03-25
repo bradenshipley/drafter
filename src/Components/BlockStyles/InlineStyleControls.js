@@ -20,6 +20,10 @@ const InlineStyleControls = (props) => {
           style={type.style}
         />
       )}
+      <button onClick={props.onAddImage}>
+        {/* <i class="material-icons">image</i> */}
+        <span>image</span>
+      </button>
     </div>
   );
 };
