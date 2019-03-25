@@ -1,15 +1,21 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { EditorState, RichUtils } from 'draft-js'
+import CodeUtils from 'draft-js-code'
 import Editor from "draft-js-plugins-editor"
+import BlockStyleToolbar, { getBlockStyle } from "../BlockStyles/BlockStyleToolbar";
+import InlineStyleControls from '../BlockStyles/InlineStyleControls'
+//plugin imports
 import createHighlightPlugin from '../Plugins/highlightPlugin'
+import addLinkPlugin from '../Plugins/addLinkPlugin'
 import './Editor.css'
 const MyEditor = () => {
   const highlightPlugin = createHighlightPlugin()
   const plugins = [
-    highlightPlugin
+    highlightPlugin,
+    addLinkPlugin
   ]
-  //create our state
-  const [editorState, updateState] = useState(EditorState.createEmpty())
+  const starterState = EditorState.createEmpty()
+  const [editorState, updateState] = useState(starterState)
   const handleKeyCommand = (command) => {
     const newState = RichUtils.handleKeyCommand(editorState, command)
     if (newState) {
@@ -18,36 +24,48 @@ const MyEditor = () => {
     }
     return 'not-handled'
   }
-  const onUnderlineClick = () => {
-    updateState(RichUtils.toggleInlineStyle(editorState, 'UNDERLINE'))
+  useEffect(() => { console.log(editorState) }, editorState)
+
+  const toggleBlockType = (blockType) => {
+    updateState(RichUtils.toggleBlockType(editorState, blockType))
   }
-  const onBoldClick = () => {
-    updateState(RichUtils.toggleInlineStyle(editorState, 'BOLD'))
+  const toggleInlineStyle = (inlineStyle) => {
+    updateState(
+      RichUtils.toggleInlineStyle(editorState,
+        inlineStyle
+      )
+    );
   }
-  const onItalicClick = () => {
-    updateState(RichUtils.toggleInlineStyle(editorState, 'ITALIC'))
+  const onTab = (e) => {
+    updateState(CodeUtils.onTab(e, editorState));
   }
-  const onHighlight = () => {
-    updateState(RichUtils.toggleInlineStyle(editorState, 'HIGHLIGHT'))
-  }
+  let className = 'RichEditor-editor';
+
   return (
-    <div className='Container'>
-      <button onClick={onUnderlineClick}>U</button>
-      <button onClick={onBoldClick}><b>B</b></button>
-      <button onClick={onItalicClick}><em>I</em></button>
-      <button className="highlight" onClick={onHighlight}>
-        <span style={{ background: "yellow" }}>H</span>
-      </button>
-      <div className='Editor'>
+    <div className='RichEditor-root'>
+      <BlockStyleToolbar
+        editorState={editorState}
+        onToggle={toggleBlockType}
+      />
+      <InlineStyleControls
+        editorState={editorState}
+        onToggle={toggleInlineStyle}
+      />
+      <div className={className}>
         <Editor
           plugins={plugins}
+          spellCheck
+          onTab={onTab}
+          textAlignment="left"
+          blockStyleFn={getBlockStyle}
           editorState={editorState}
           onChange={updateState}
           handleKeyCommand={handleKeyCommand}
         />
       </div>
-
     </div>
   )
 }
+
+
 export default MyEditor
