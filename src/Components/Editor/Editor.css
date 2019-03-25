@@ -1,0 +1,14 @@
+.Container {
+  padding: 1em;
+  margin: 1em;
+  width:80vw;
+  min-height:40vh;
+}
+
+.Editor {
+  border: 1px blue solid;
+  padding: 1em;
+  margin: 1em;
+  font-family: 'Times New Roman';
+  font-size: 90%;
+}
